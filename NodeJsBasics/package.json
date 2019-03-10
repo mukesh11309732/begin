@@ -1,0 +1,19 @@
+{
+  "name": "nodejsbasics",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express-handlebars": "^3.0.2",
+    "handlebars": "^4.1.0",
+    "lodash": "^4.17.11",
+    "request": "^2.88.0",
+    "xml-parser": "^1.2.1"
+  }
+}
