@@ -1,6 +1,7 @@
 var XMLParserHelper = require('./XMLParserHelper');
 var GenerateXMLHelper = require('./GenerateXMLHelper');
 var Gpage = require('./saveGPage');
+var downloadImages = require('./DownloadImagesAsync');
 
 function testGetJSONFromXml() {
     var sampleXMl = "<products>\n" +
@@ -72,7 +73,17 @@ function testDownloadAndSaveGPage() {
     Gpage.downloadAndSaveGPage();
 }
 
+function testDownloadImagesAsync() {
+    downloadImages.downloadImagesAsync();
+}
+
+function testGetShortenedUrl() {
+    downloadImages.getListOfUrls();
+}
+
 module.exports.testGetJSONFromXml = testGetJSONFromXml;
 module.exports.testGetJSONFromXMLFile = testGetJSONFromXMLFile;
 module.exports.testGenerateXML = testGenerateXML;
 module.exports.testDownloadAndSaveGPage = testDownloadAndSaveGPage;
+module.exports.testDownloadImagesAsync = testDownloadImagesAsync;
+module.exports.testGetShortenedUrl = testGetShortenedUrl;

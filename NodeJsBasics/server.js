@@ -10,9 +10,12 @@ http.createServer(function (req, res) {
 *use the following snippet to test the APIs
 *
  */
+
 var tests = require('./tests');
 
 tests.testGetJSONFromXml();
 tests.testGetJSONFromXMLFile();
 tests.testGenerateXML();
 tests.testDownloadAndSaveGPage();
+tests.testDownloadImagesAsync();
+tests.testGetShortenedUrl();
