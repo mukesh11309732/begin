@@ -1,6 +1,6 @@
 'use strict'
 
-var ioAPIs = require('./ioAPIs')
+var ioHelper = require('./ioHelper')
 var io = require('./constants')
 
 var _connectionId = "";
@@ -15,106 +15,48 @@ var connectors = {
         connectorInstallerFunction: function (options, callback) {
             console.log("Starting connector installation process... : " + JSON.stringify(options));
 
-            var ioHandler = new ioAPIs(options["bearerToken"]);
-
-            //creating connection
-            var netsuite = {}
-            netsuite.res_type = "connections";
-            netsuite.body = io.data.connections;
-            ioHandler.createResource(netsuite, _getIntegrationDoc);
+            var _ioHelper = new ioHelper(options["bearerToken"]);
+            _ioHelper.createConnection(null, _getIntegrationDoc);
 
             function _getIntegrationDoc(res) {
 
                 if (res.error) {
-                    console.log("Failed to create connection : " + JSON.stringify(res.error))
-                    return callback(res.error, null)
-                } else {
-                    res = JSON.parse(res)
-                    _connectionId = res._id;
-                    ioHandler.getIntegrationDoc(options, _updateIntegrationDoc);
-                    
-                    //creating export
-                    var netsuite = {}
-                    netsuite.res_type = "exports";
-                    io.data.exports._connectionId = _connectionId;
-                    netsuite.body = io.data.exports;
-                    ioHandler.createResource(netsuite, function(res) {
-                        if (res.error) {
-                            console.log("Failed to create export : " + JSON.stringify(res.error))
-                            return callback(res.error, null)
-                        } else {
-                            console.log("Successfully created export : " + JSON.stringify(res))
-                            _callbackCounter ++;
-                            res = JSON.parse(res)
-                            _exportId = res._id;
-                            if(_callbackCounter == 3) {
-                                _callback();
-                            }
-                        }
-                    })
-
-                    //creating import
-                    var netsuite = {}
-                    netsuite.res_type = "imports";
-                    io.data.imports._connectionId = _connectionId;
-                    netsuite.body = io.data.imports;
-                    ioHandler.createResource(netsuite, function(res) {
-                        if (res.error) {
-                            console.log("Failed to create import : " + JSON.stringify(res.error))
-                            return callback(res.error, null)
-                        } else {
-                            console.log("Successfully created import : " + JSON.stringify(res))
-                            _callbackCounter ++;
-                            res = JSON.parse(res)
-                            _importId = res._id;
-                            if(_callbackCounter == 3) {
-                                _callback();
-                            }
-                        }
-                    })
-
+                    return _callback(res.error)
                 }
+                _ioHelper.getIntegrationDoc(options, _updateIntegrationDoc);
+
+                _ioHelper.createExports(null, _callback);
+                _ioHelper.createImports(null, _callback);
             }
 
             function _updateIntegrationDoc(res) {
-                if (!res.error) {
-                    res = JSON.parse(res);
-                    res.install = io.data.integration.install
-                    res.install[0]._connectionId = _connectionId
-                    res.mode = io.data.integration.mode
-
-                    ioHandler.updateIntegration(res, function (res) {
-
-                        if (res.error) {
-                            console.log("Failed to update integration : " + JSON.stringify(res.error))
-                            return callback(res.error, null);
-                        }
-                        _callbackCounter ++;
-                        ioHandler.saveIntegrationDoc(res)
-                        if(_callbackCounter == 3) {
-                            _callback();
-                        }
-                    })
+                if (res.error) {
+                    return _callback(res.error)
                 }
+                res = JSON.parse(res);
+                res.install = io.data.integration.install
+                res.install[0]._connectionId = io.globals.connectionId
+                res.mode = io.data.integration.mode
+
+                _ioHelper.updateIntegrationDoc(res, _callback)
             }
 
-            function _callback() {
-                //creating Flow
-                var netsuite = {}
-                netsuite.res_type = "flows";
-                io.data.flows.pageGenerators[0]._exportId = _exportId;
-                io.data.flows.pageProcessors[0]._importId = _importId;
-                netsuite.body = io.data.flows;
-                ioHandler.createResource(netsuite, function(res) {
-                    if (res.error) {
-                        console.log("Failed to create import : " + JSON.stringify(res.error))
-                        return callback(res.error, null)
-                    } 
-                    res = JSON.parse(res);
-                    _flowId = res._id;
-                    console.log("Successfully created flow : " + JSON.stringify(res))
+            function _callback(res) {
+                _ifErrorReturnCallback(res)
+                _ioHelper.createFlows(null, function (res) {
+                    _ifErrorReturnCallback(res)
+                    console.log("-------------------------------------------------------")
+                    console.log("Installation successful")
                     return callback(null, res);
                 })
+
+            }
+
+            function _ifErrorReturnCallback(res) {
+                if (res.error) {
+                    console.log("Error in installing IO Netsuite Smart connector : " + JSON.stringify(res.error))
+                    return callback(res.error, null);
+                }
             }
 
         },
@@ -122,25 +64,24 @@ var connectors = {
         verifyNetSuiteConnection: function (options, callback) {
             console.log("Verifying connector installation process... : " + JSON.stringify(options));
 
-            var ioHandler = new ioAPIs(options["bearerToken"]);
-            ioHandler.getIntegrationDoc(options, _updateIntegrationDoc);
+            var _ioHelper = new ioHelper(options["bearerToken"]);
+            _ioHelper.getIntegrationDoc(options, _updateIntegrationDoc);
 
             function _updateIntegrationDoc(res) {
                 if (!res.error) {
                     res = JSON.parse(res);
                     res.install[0].completed = true;
                     res.mode = "settings"
-                    io.ui.settings.sections[0].flows[0]._id = _flowId;
+                    io.ui.settings.sections[0].flows[0]._id = io.globals.flowId;
                     res.settings = io.ui.settings;
+                    res.skipCounting = true;
 
-                    ioHandler.updateIntegration(res, function (res) {
+                    _ioHelper.updateIntegrationDoc(res, function (res) {
 
                         if (res.error) {
                             console.log("Failed to update integration : " + JSON.stringify(res.error))
                             return callback(res.error, null);
                         }
-                        res = JSON.parse(res)
-                        ioHandler.saveIntegrationDoc(res)
                         var response = {
                             "success": true,
                             "stepsToUpdate": res.install
@@ -168,6 +109,10 @@ var connectors = {
     settings: {
         persistSettings: function (option, callback) {
             console.log("Updating settings for connector : " + JSON.stringify(options));
+            var response = {
+                "success": true,
+                "pending": res.install
+            }
             callback(null, null);
         }
     }

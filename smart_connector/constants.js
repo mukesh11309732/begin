@@ -171,13 +171,13 @@ io.ui = {
                 },
                 {
                     "options": [
-                        ["36628", "Celigo Jet Fulfillment Export Search"]
+                        ["1", "Mr"]
                     ],
                     "supportsRefresh": true,
-                    "name": "exports_unique_title_prefix",
+                    "name": "exports_unique_name_prefix",
                     "type": "select",
-                    "value": "36628",
-                    "label": "NetSuite saved search for syncing item fulfillments"
+                    "value": "1",
+                    "label": "Name Prefix"
                 }
             ],
             flows: [{
@@ -187,6 +187,10 @@ io.ui = {
             }],
         }]
     }
+}
+
+io.globals = {
+
 }
 
 module.exports = io;
