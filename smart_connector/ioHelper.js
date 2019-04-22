@@ -128,6 +128,25 @@ function ioHelper(token) {
         console.log("Successfully updated integration : " + JSON.stringify(res))
     }
 
+    this.updateExports = function (options, callback) {
+        var options = options || {}
+        options.res_type = "exports";
+        options.res_id = io.globals.exportId;
+        options.body = io.data.exports;
+        options.headers = _headers;
+        _ioHandler.updateResource(options, function(res) {
+            if (res.error) {
+                console.log("Failed to update export : " + JSON.stringify(res.error))
+                callback(res.error)
+            } else {
+                console.log("Successfully updated export : " + JSON.stringify(res))
+                res = JSON.parse(res)
+                callback(res);
+            }
+        })
+    }
+
+
 }
 
 module.exports = ioHelper;

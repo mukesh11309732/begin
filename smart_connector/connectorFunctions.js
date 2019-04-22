@@ -2,6 +2,7 @@
 
 var ioHelper = require('./ioHelper')
 var io = require('./constants')
+var _ = require('lodash')
 
 var _connectionId = "";
 var _exportId = "";
@@ -107,13 +108,84 @@ var connectors = {
     },
 
     settings: {
-        persistSettings: function (option, callback) {
+        persistSettings: function (options, callback) {
             console.log("Updating settings for connector : " + JSON.stringify(options));
-            var response = {
-                "success": true,
-                "pending": res.install
+            var _ioHelper = new ioHelper(options["bearerToken"]);
+            if (options.pending.exports_unique_delta_all) {
+                
+                if (options.pending.exports_unique_delta_all == true) {
+                    io.data.exports.delta = {
+                        "dateField": "lastmodified"
+                    }
+                    _ioHelper.updateExports(null, _callback);
+                } else {
+                    io.data.exports.delta = {
+                    }
+                    _ioHelper.updateExports(null, _callback);
+                }
             }
-            callback(null, null);
+
+            if(options.pending.exports_unique_name_prefix) {
+                _callback(options)
+            }
+            
+            function _callback(res) {
+                if (res.error) {
+                    console.log("Error in installing IO Netsuite Smart connector : " + JSON.stringify(res.error))
+                    return callback(res.error, null);
+                }
+                console.log("-------------------------------------------------------")
+                console.log("Settings updated")
+                io.ui.settings.sections[0].fields[0].value = true;
+                var response = {
+                    "success": true,
+                    "pending": io.ui.settings
+                }
+                callback(null, response);
+            }
+        },
+
+        refreshMetadata : function(options, callback) {
+            console.log("Refreshing settings for connector : " + JSON.stringify(options));
+
+            var _ioHelper = new ioHelper(options["bearerToken"]);
+            _ioHelper.getIntegrationDoc(options, _updateIntegrationDoc);
+
+            function _updateIntegrationDoc(res) {
+                if (!res.error) {
+                    res = JSON.parse(res);
+                    io.ui.settings.sections[0].fields[1].options = io.ui.metadata;
+                    res.settings = io.ui.settings;
+                    res.skipCounting = true;
+
+                    _ioHelper.updateIntegrationDoc(res, function (res) {
+
+                        if (res.error) {
+                            console.log("Failed to update integration : " + JSON.stringify(res.error))
+                            return callback(res.error, null);
+                        }
+                        return callback(null, io.ui.settings);
+                    })
+                }
+            }
+        }
+    },
+
+    hooks : {
+        preMapFunction : function(options, callback) {
+            console.log("Inside hooks - premap function : " + JSON.stringify(options));
+            var prefix  = options.settings.sections[0].fields[1].value;
+            if(prefix) {
+                var title = io.ui.metadata[prefix - 1][1];
+                if(options.settings)
+                var result = [];
+                _.each(options.data, function(customer) {
+                    customer.entityId = title + ". " +  customer.entityId;
+                    result.push({"data" : customer});
+                })
+                return callback(null, result);
+            } 
+            return callback(null, options);
         }
     }
 };

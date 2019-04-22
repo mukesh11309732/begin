@@ -67,8 +67,14 @@ function ioAPIs() {
     this.updateIntegration = function (options, callback) {
 
         var url = io.data.network.url + "integrations/" + options._id;
-        console.log("Installing connector: updating integration object : " + JSON.stringify(options));
+        console.log("Updating integration object : " + JSON.stringify(options));
         rest.put(url, options.headers, options, callback);
+    }
+
+    this.updateResource = function (options, callback) {
+        var url = io.data.network.url + options.res_type + "/" + options.res_id;
+        console.log("Updating resource : " + JSON.stringify(options));
+        rest.put(url, options.headers, options.body, callback);
     }
 }
 

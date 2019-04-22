@@ -111,6 +111,12 @@ io.data = {
         "_connectionId": "io_netsuite_mimick_import_netsuite",
         "distributed": true,
         "apiIdentifier": "i3163d36c3",
+        "hooks": {
+            "preMap": {
+            "_stackId": "5ca1e05518010f730b6721fa",
+            "function": "preMapFunction"
+            }
+        },
         "lookups": [],
         "netsuite_da": {
             "operation": "add",
@@ -186,7 +192,13 @@ io.ui = {
                 "_id": "IO Netsuite mimick Flow id"
             }],
         }]
-    }
+    },
+
+    metadata : [
+        ["1", "Mr"],
+        ["2", "Mrs"],
+        ["3", "Ms"]
+    ]
 }
 
 io.globals = {
