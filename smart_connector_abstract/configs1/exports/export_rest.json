@@ -1,0 +1,19 @@
+{
+    "data": {
+        "name": "Rest Export",
+        "description": "data from get api",
+        "asynchronous": true,
+        "type": "test",
+        "sampleData": {
+            "msg": "Hello World."
+        },
+        "test": {
+            "limit": 1
+        },
+        "rest": {
+            "relativeURI": "/get",
+            "method": "GET"
+        }
+    },
+    "resourcetype": "exports"
+}

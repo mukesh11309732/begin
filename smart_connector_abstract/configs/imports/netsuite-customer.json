@@ -1,0 +1,36 @@
+{
+    "data": {
+        "name": "Netsuite Customers Import",
+        "description": "Import all standard customers to record custom type",
+        "_connectionId": "io_netsuite_mimick_import_netsuite",
+        "distributed": true,
+        "hooks": {
+            "preMap": {
+                "_stackId": "5ca1e05518010f730b6721fa",
+                "function": "preMapFunction"
+            }
+        },
+        "lookups": [],
+        "netsuite_da": {
+            "operation": "add",
+            "recordType": "customrecord736",
+            "lookups": [],
+            "mapping": {
+                "fields": [{
+                    "generate": "name",
+                    "extract": "['entityId']",
+                    "internalId": false,
+                    "immutable": false,
+                    "discardIfEmpty": false
+                }],
+                "lists": []
+            }
+        }
+    },
+    "resourcetype": "imports",
+    "jsonpath": [{
+        "record": "connection-netsuite",
+        "readfrom": "_id",
+        "writeto": "_connectionId"
+    }]
+}

@@ -1,0 +1,49 @@
+{
+  "connection-netsuite": {
+    "dependson": [],
+    "filelocation": "configs/connections/netsuite.json"
+  },
+  "integration": {
+    "filelocation": "configs/integrations/integration.json",
+    "dependson": [
+      "state",
+      "connection-netsuite",
+      "export-netsuite-customer",
+      "import-netsuite-customer",
+      "flow-netsuite-netsuite",
+      "connection-rest",
+      "export-rest",
+      "import-rest",
+      "flow-rest-rest"
+    ]
+  },
+  "import-netsuite-customer": {
+    "dependson": [
+      "state",
+      "connection-netsuite",
+      "export-netsuite-customer"
+    ],
+    "filelocation": "configs/imports/netsuite-customer.json"
+  },
+  "export-netsuite-customer": {
+    "filelocation": "configs/exports/netsuite-customer.json",
+    "dependson": [
+      "state",
+      "connection-netsuite"
+    ]
+  },
+  "flow-netsuite-netsuite": {
+    "filelocation": "configs/flows/netsuite-netsuite.json",
+    "dependson": [
+      "state",
+      "connection-netsuite",
+      "export-netsuite-customer",
+      "import-netsuite-customer"
+    ]
+  },
+  "versionInfo": {
+    "name": "versionInfo",
+    "filelocation": "package.json",
+    "resolved": true
+  }
+}

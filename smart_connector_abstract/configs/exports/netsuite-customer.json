@@ -1,0 +1,30 @@
+{
+    "data": {
+        "name": "Netsuite Customers",
+        "description": "Fetch all individual customers",
+        "_connectionId": "Netsuite connection id",
+        "asynchronous": true,
+        "sampleData": [],
+        "netsuite": {
+            "type": "search",
+            "searches": [{
+                "savedSearchId": "60994",
+                "recordType": "customer",
+                "criteria": []
+            }],
+            "skipGrouping": true,
+            "statsOnly": false,
+            "distributed": {
+                "disabled": false,
+                "forceReload": false
+            }
+        }
+    },
+
+    "resourcetype": "exports",
+    "jsonpath": [{
+        "record": "connection-netsuite",
+        "readfrom": "_id",
+        "writeto": "_connectionId"
+    }]
+}

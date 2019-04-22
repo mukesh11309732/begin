@@ -1,0 +1,7 @@
+{
+    "data": {
+        "type": "rest",
+        "name": "Rest Connection (Rest Connector)"
+    },
+    "resourcetype": "connections"
+}

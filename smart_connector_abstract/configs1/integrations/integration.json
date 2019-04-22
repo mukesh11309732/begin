@@ -1,0 +1,103 @@
+{
+    "data": {
+        "name": "Netsuite Smart Connector",
+        "install": [{
+            "name": "NetSuite Connection",
+            "description": "Configure NetSuite account credentials",
+            "imageURL": "/images/company-logos/netsuite.png",
+            "completed": false,
+            "installerFunction": "verifyNetSuiteConnection",
+            "_connectionId": "Netsuite connection Id"
+        }],
+        "mode": "install",
+        "settings": {
+            "commonresources": {},
+            "sections": [{
+                "fields": [{
+                        "value": false,
+                        "name": "exports_exportsId_deltaExport",
+                        "type": "checkbox",
+                        "tooltip": "If checked, connector tells netsuite exports to export delta data instead of all data export",
+                        "label": "Delta Export"
+                    },
+                    {
+                        "options": [
+                            ["1", "Mr"]
+                        ],
+                        "supportsRefresh": true,
+                        "name": "imports_importsId_addPrefix_listPrefix",
+                        "type": "select",
+                        "value": "1",
+                        "label": "Name Prefix"
+                    }
+                ],
+                "flows": [{
+                    "showSchedule": true,
+                    "showMapping": true,
+                    "_id": "IO Netsuite mimick Flow id"
+                }]
+            }]
+        }
+    },
+    "resourcetype": "integrations",
+    "jsonpath": [{
+            "record": "versionInfo",
+            "readfrom": "version",
+            "writeto": "version"
+        },
+        {
+            "record": "state",
+            "readfrom": "_integrationId",
+            "writeto": "_id"
+        },
+        {
+            "record": "connection-netsuite",
+            "readfrom": "_id",
+            "writeto": "netsuiteConnectionId",
+            "writetopath": "$.settings.commonresources"
+        },
+        {
+            "record": "connection-netsuite",
+            "readfrom": "_id",
+            "writeto": "_connectionId",
+            "writetopath": "$.install[?(@.installerFunction==\"verifyNetSuiteConnection\")]"
+        },
+
+        {
+            "record": "flow-netsuite-netsuite",
+            "readfrom": "_id",
+            "writeto": "_id",
+            "writetopath": "$.settings.sections[0].flows[0]"
+        },
+        {
+            "readfrom": [{
+                    "readfrom": "exports_"
+                },
+                {
+                    "record": "export-netsuite-customer",
+                    "readfrom": "_id"
+                },
+                {
+                    "readfrom": "_deltaExport"
+                }
+            ],
+            "writeto": "name",
+            "writetopath": "$..fields[?(@.label==\"Delta Export\")]"
+        },
+        {
+            "readfrom": [{
+                    "readfrom": "imports_"
+                },
+                {
+                    "record": "import-netsuite-customer",
+                    "readfrom": "_id"
+                },
+                {
+                    "readfrom": "_addPrefix_listPrefix"
+                }
+            ],
+            "writeto": "name",
+            "writetopath": "$..fields[?(@.label==\"Name Prefix\")]"
+        }
+    ]
+}

@@ -1,0 +1,19 @@
+{
+    "data": {
+        "name": "NetSuite to NetSuite",
+        "disabled": false,
+        "description": "Mimick standard customers in custom record inside Netsuite"
+    },
+    "resourcetype": "flows",
+    "jsonpath": [{
+            "record": "export-netsuite-customer",
+            "readfrom": "_id",
+            "writeto": "_exportId"
+        },
+        {
+            "record": "import-netsuite-customer",
+            "readfrom": "_id",
+            "writeto": "_importId"
+        }
+    ]
+}

@@ -1,0 +1,37 @@
+{
+    "data": {
+        "name": "rest Import",
+        "description": "data will to imported to rest api post",
+        "sampleData": {
+            "msg": "message"
+        },
+        "responseTransform": {
+            "type": "expression",
+            "expression": {
+                "version": "1"
+            },
+            "version": "1"
+        },
+        "parsers": [],
+        "distributed": false,
+        "lookups": [],
+        "rest": {
+            "relativeURI": [
+                "/upload"
+            ],
+            "method": [
+                "POST"
+            ],
+            "body": [
+                ""
+            ],
+            "responseIdPath": [
+                ""
+            ],
+            "successPath": [
+                ""
+            ]
+        }
+    },
+    "resourcetype": "imports"
+}

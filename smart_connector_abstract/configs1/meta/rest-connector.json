@@ -1,0 +1,29 @@
+{
+    "connection-rest": {
+      "dependson": [],
+      "filelocation": "configs/connections/rest.json"
+    },
+    "import-rest": {
+      "dependson": [
+        "state",
+        "connection-rest"
+      ],
+      "filelocation": "configs/imports/import-rest.json"
+    },
+    "export-rest": {
+      "filelocation": "configs/exports/export-rest.json",
+      "dependson": [
+        "state",
+        "connection-rest"
+      ]
+    },
+    "flow-rest-rest": {
+      "filelocation": "configs/flows/rest-rest.json",
+      "dependson": [
+        "state",
+        "connection-rest",
+        "export-rest",
+        "import-rest"
+      ]
+    }
+  }
